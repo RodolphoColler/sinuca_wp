@@ -1,17 +1,6 @@
 <?=get_header()?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="C:\wamp64\www\wordpress-6.6.2\wordpress\wp-content\themes\Tema-sem-macula/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
-  
-</head>
+
 
 <style>
   .player-stats {
@@ -22,8 +11,6 @@
     margin-bottom: 10px;
     border-radius: 30px;
     padding-left: 20px;
-    /* margin-top: 50px; */
-    /* width: min-content; */
   }
 
   .player-name {
@@ -45,6 +32,7 @@
   }
 </style>
 <body>
+  <a href="<?php echo home_url('createPlayer') ?>">cadastrar jogador</a>
   <?php 
       $url = "http://localhost:3000/player";
 
@@ -101,8 +89,6 @@
           exit;
       }
 
-      // var_dump($data->singleMatch);
-
       class Leaderboard {
         public $name;
         public $games_played;
@@ -135,6 +121,7 @@
                 'loses' => 0
             ];
         }
+
         if (!isset($playersStats[$playerTwoId])) {
             $playersStats[$playerTwoId] = [
                 'name' => $playerTwoName,
@@ -143,7 +130,7 @@
                 'loses' => 0
             ];
         }
-    
+
         // Atualiza as estatísticas
         $playersStats[$playerOneId]['games_played']++;
         $playersStats[$playerTwoId]['games_played']++;
