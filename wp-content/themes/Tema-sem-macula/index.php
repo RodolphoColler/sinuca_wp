@@ -1,7 +1,8 @@
-<?=get_header()?>
+<?= get_header() ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
-  
+
 </head>
 
 <style>
@@ -34,138 +35,154 @@
     color: #20de6e;
     margin: 0 10px;
   }
+
   .lose {
     color: #de2020;
     margin: 0 10px;
   }
+
   .winrate-gradient {
     width: 150px;
     height: 4px;
     border-radius: 10px;
   }
 </style>
+
 <body>
-  <?php 
-      $url = "http://localhost:3000/player";
+  <!--  conexão com API -->
+  <?php
+  $url = "http://localhost:3000/player";
 
-      $ch = curl_init($url);
+  $ch = curl_init($url);
 
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-      $response = curl_exec($ch);
+  $response = curl_exec($ch);
 
-      curl_close($ch);
+  curl_close($ch);
 
-      $data = json_decode($response);
+  $data = json_decode($response);
 
-      if (json_last_error() !== JSON_ERROR_NONE) {
-          echo "Erro na decodificação JSON: " . json_last_error_msg();
-          exit;
-      }
+  if (json_last_error() !== JSON_ERROR_NONE) {
+    echo "Erro na decodificação JSON: " . json_last_error_msg();
+    exit;
+  }
   ?>
 
-  <h1>Selecione dois Jogadores para formar dupla</h1>
-  <form action="">
-    <select name="" id="">
-      <?php 
-        foreach($data->players as $player) {
-          echo "<option value=" .$player->id .  ">" . $player->name . "</option>";
+  <!-- 
+    <h1>Selecione dois Jogadores para formar dupla</h1>
+    <form action="">
+      <select name="" id="">
+        <?php
+        foreach ($data->players as $player) {
+          echo "<option value=" . $player->id .  ">" . $player->name . "</option>";
         }
-      ?>
-    </select>
-    <select name="" id="">
-      <?php 
-        foreach($data->players as $player) {
-          echo "<option value=" .$player->id .  ">" . $player->name . "</option>";
+        ?>
+      </select>
+      <select name="" id="">
+        <?php
+        foreach ($data->players as $player) {
+          echo "<option value=" . $player->id .  ">" . $player->name . "</option>";
         }
-      ?>
-    </select>
-    <button type="submit">Criar Dupla</button>
-  </form>
+        ?>
+      </select>
+      <button type="submit">Criar Dupla</button>
+    </form> 
+  -->
 
-  <?php 
-      $url = "http://localhost:3000/single";
 
-      $ch = curl_init($url);
+  <?php
+  $url = "http://localhost:3000/single";
 
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $ch = curl_init($url);
 
-      $response = curl_exec($ch);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-      curl_close($ch);
+  $response = curl_exec($ch);
 
-      $data = json_decode($response, true);
+  curl_close($ch);
 
-      if (json_last_error() !== JSON_ERROR_NONE) {
-          echo "Erro na decodificação JSON: " . json_last_error_msg();
-          exit;
-      }
+  $data = json_decode($response, true);
 
-      // var_dump($data->singleMatch);
+  if (json_last_error() !== JSON_ERROR_NONE) {
+    echo "Erro na decodificação JSON: " . json_last_error_msg();
+    exit;
+  }
 
-      class Leaderboard {
-        public $name;
-        public $games_played;
-        public $victories;
-        public $loses;
-        public $win_rate;
+  // var_dump($data->singleMatch);
 
-        public function __construct($name, $games_played, $victories, $loses, $win_rate) {
-          $this->name = $name;
-          $this->games_played = $games_played;
-          $this->victories = $victories;
-          $this->loses = $loses;
-          $this->win_rate = $win_rate;
-        }
-      }
+  class Leaderboard{
+    public $name;
+    public $games_played;
+    public $victories;
+    public $loses;
+    public $win_rate;
 
-      foreach ($data['singleMatch'] as $match) {
-        $playerOneId = $match['player_one_id'];
-        $playerTwoId = $match['player_two_id'];
-        $playerOneName = $match['player_one']['name'];
-        $playerTwoName = $match['player_two']['name'];
-        $result = $match['result'];
-    
-        // Inicializa os jogadores se não existirem
-        if (!isset($playersStats[$playerOneId])) {
-            $playersStats[$playerOneId] = [
-                'name' => $playerOneName,
-                'games_played' => 0,
-                'victories' => 0,
-                'loses' => 0
-            ];
-        }
-        if (!isset($playersStats[$playerTwoId])) {
-            $playersStats[$playerTwoId] = [
-                'name' => $playerTwoName,
-                'games_played' => 0,
-                'victories' => 0,
-                'loses' => 0
-            ];
-        }
-    
-        // Atualiza as estatísticas
-        $playersStats[$playerOneId]['games_played']++;
-        $playersStats[$playerTwoId]['games_played']++;
+    public function __construct($name, $games_played, $victories, $loses, $win_rate)
+    {
+      $this->name = $name;
+      $this->games_played = $games_played;
+      $this->victories = $victories;
+      $this->loses = $loses;
+      $this->win_rate = $win_rate;
+    }
+  }
 
-        if ($result === $playerOneId) {
-            $playersStats[$playerOneId]['victories']++;
-            $playersStats[$playerTwoId]['loses']++;
-        } else {
-            $playersStats[$playerTwoId]['victories']++;
-            $playersStats[$playerOneId]['loses']++;
-        }
+  foreach ($data['singleMatch'] as $match) {
+    $playerOneId = $match['player_one_id'];
+    $playerTwoId = $match['player_two_id'];
+    $playerOneName = $match['player_one']['name'];
+    $playerTwoName = $match['player_two']['name'];
+    $result = $match['result'];
+
+    // Inicializa os jogadores se não existirem
+    if (!isset($playersStats[$playerOneId])) {
+      $playersStats[$playerOneId] = [
+        'name' => $playerOneName,
+        'games_played' => 0,
+        'victories' => 0,
+        'loses' => 0
+      ];
+    }
+    if (!isset($playersStats[$playerTwoId])) {
+      $playersStats[$playerTwoId] = [
+        'name' => $playerTwoName,
+        'games_played' => 0,
+        'victories' => 0,
+        'loses' => 0
+      ];
     }
 
-    // Criando os objetos Leaderboard
-    $leaderboard = [];
-    foreach ($playersStats as $stats) {
-        $win_rate = $stats['games_played'] > 0 ? ($stats['victories'] / $stats['games_played']) * 100 : 0;
-        $leaderboard[] = new Leaderboard($stats['name'], $stats['games_played'], $stats['victories'], $stats['loses'], $win_rate);
-    }
+    // Atualiza as estatísticas
+    $playersStats[$playerOneId]['games_played']++;
+    $playersStats[$playerTwoId]['games_played']++;
 
-    foreach ($leaderboard as $player) {
-      echo <<< HTML
+    if ($result === $playerOneId) {
+      $playersStats[$playerOneId]['victories']++;
+      $playersStats[$playerTwoId]['loses']++;
+    } else {
+      $playersStats[$playerTwoId]['victories']++;
+      $playersStats[$playerOneId]['loses']++;
+    }
+  }
+
+
+
+
+ 
+  // Criando os objetos Leaderboard
+  $leaderboard = [];
+  
+  foreach ($playersStats as $stats) {
+    //calcular winrate
+    $win_rate = $stats['games_played'] > 0 ? ($stats['victories'] / $stats['games_played']) * 100 : 0;
+
+    //objeto player X1
+    $leaderboard[] = new Leaderboard($stats['name'], $stats['games_played'], $stats['victories'], $stats['loses'], $win_rate);
+  }
+
+  foreach ($leaderboard as $player) {
+    echo <<< HTML
         <div class="player-stats">
           <p class="player-name"> $player->name  </p>
           <p class="victory"> $player->victories V </p>
@@ -177,16 +194,19 @@
             #de2020);"
           ></div>
           <p class="lose"> $player->loses D </p>
-          <p> Jogos: $player->games_played </p>
-          <p> Win-rate: $player->win_rate %</p>
+          <p> Jogos: $player->games_played |</p>
+          <p> | Win-rate: $player->win_rate %</p>
         </div>
       HTML;
-    }
-          // Jogos: {$player->games_played}, Derrotas: {$player->loses}, Win Rate: {$player->win_rate}%\n </p>
+  }
+  // Jogos: {$player->games_played}, Derrotas: {$player->loses}, Win Rate: {$player->win_rate}%\n </p>
 
+  echo bloginfo('template_url');
   ?>
 
+  <a href="<?php bloginfo('template_url') ?>/duo_match.php">Partidas X2</a>
 </body>
+
 </html>
 <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
@@ -199,3 +219,5 @@
   }
   getPlayers().then((s) => console.log(s))
 </script> -->
+
+
